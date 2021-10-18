@@ -1,0 +1,62 @@
+pragma soliditypp ^0.4.5;
+
+contract Vitelink {
+    address publisher;
+    address[] nodes;
+
+    mapping(string => string) dataStorage;
+
+    mapping(string => mapping(string => uint)) voteCache;
+    mapping(string => address) requesterCache;
+
+    event requested(string requestAddr);
+    message _VitelinkCallback(string requestAddr, string resultData);
+
+    tokenId viteToken = tokenId("tti_5649544520544f4b454e6e40");
+
+    constructor() {
+      publisher = msg.sender;
+      nodes.push(msg.sender);
+    }
+
+    onMessage () payable {
+      if (msg.tokenid == viteToken && msg.amount == 10000) {
+        bool isExists = false;
+        for (uint i=0; i < nodes.length; i++) {
+          if (msg.sender == nodes[i]) {
+            isExists = true;
+          }
+        }
+        if (isExists == true) {
+          nodes.push(msg.sender);
+        } else {
+          msg.sender.transfer(msg.tokenid, msg.amount);
+        }
+      } else if (msg.tokenid == viteToken && msg.amount == 1) {
+        require(msg.sender != publisher);
+        for (uint i = 0; i < nodes.length; i++) {
+          if (nodes[i] == msg.sender) {
+            delete nodes[i];
+            msg.sender.transfer(msg.tokenid, 1000 * 1e18);
+          }
+        }
+      } else {
+        msg.sender.transfer(msg.tokenid, msg.amount);
+      }
+    }
+
+    onMessage request(string calldata requestAddr) payable {
+      require(requesterCache[requestAddr] != address(0x0));
+      requesterCache[requestAddr] = msg.sender;
+      emit requested(requestAddr);
+    }
+
+    onMessage requestedData(string calldata requestAddr, string calldata data) {
+      voteCache[requestAddr][data] += 1;
+      if (nodes.length / 2 <= voteCache[requestAddr][data]) {
+        send(requesterCache[requestAddr], _vitacleCallback(requestAddr, data)); 
+        delete requesterCache[requestAddr];
+        delete voteCache[requestAddr][data];
+      }
+    }
+}

@@ -1,0 +1,16 @@
+pragma soliditypp ^0.4.5;
+
+contract Example {
+  address VitelinkContract = address("?");
+
+  message request(string requestAddr);
+  event callbackReceived(string data);
+
+  onMessage _VitelinkCallback(string calldata requestAddr, string calldata resultData) {
+    emit callbackReceived(resultData); // Will emitted when callbacks.
+  }
+
+  onMessage request() {
+    send(VitelinkContract, request("https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd")); // Fetch Nano's price from Coingecko
+  }
+}
