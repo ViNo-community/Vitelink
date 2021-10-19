@@ -1,11 +1,12 @@
-pragma soliditypp ^0.4.5;
+pragma soliditypp ^0.4.3;
 
 contract Vitelink {
     address publisher;
-    address[] nodes;
-
+  
+    mapping(address => bool) nodeStorage;
     mapping(string => string) dataStorage;
-
+    address[] nodes;
+    
     mapping(string => mapping(string => uint)) voteCache;
     mapping(string => address) requesterCache;
 
@@ -14,30 +15,27 @@ contract Vitelink {
 
     tokenId viteToken = tokenId("tti_5649544520544f4b454e6e40");
 
-    constructor() {
+    constructor() public {
       publisher = msg.sender;
       nodes.push(msg.sender);
     }
 
     onMessage () payable {
-      if (msg.tokenid == viteToken && msg.amount == 10000) {
-        bool isExists = false;
-        for (uint i=0; i < nodes.length; i++) {
-          if (msg.sender == nodes[i]) {
-            isExists = true;
-          }
-        }
-        if (isExists == true) {
-          nodes.push(msg.sender);
-        } else {
+      if (msg.tokenid == viteToken && msg.amount == 10000 * 1e18) {
+        if (nodeStorage[msg.sender] == true) {
           msg.sender.transfer(msg.tokenid, msg.amount);
+        } else {
+          nodeStorage[msg.sender] == true;
+          nodes.push(msg.sender);
         }
-      } else if (msg.tokenid == viteToken && msg.amount == 1) {
+      } else if (msg.tokenid == viteToken && msg.amount == 1 * 1e18) {
         require(msg.sender != publisher);
-        for (uint i = 0; i < nodes.length; i++) {
-          if (nodes[i] == msg.sender) {
-            delete nodes[i];
-            msg.sender.transfer(msg.tokenid, 1000 * 1e18);
+        if (nodeStorage[msg.sender] == true) {
+          for (uint i = 0; i < nodes.length; i++) {
+            if (nodes[i] == msg.sender) {
+              delete nodes[i];
+              msg.sender.transfer(msg.tokenid, 1000 * 1e18);
+            }
           }
         }
       } else {
@@ -52,9 +50,10 @@ contract Vitelink {
     }
 
     onMessage requestedData(string calldata requestAddr, string calldata data) {
+      require(nodeStorage[msg.sender] == true);
       voteCache[requestAddr][data] += 1;
       if (nodes.length / 2 <= voteCache[requestAddr][data]) {
-        send(requesterCache[requestAddr], _vitacleCallback(requestAddr, data)); 
+        send(requesterCache[requestAddr], _VitelinkCallback(requestAddr, data)); 
         delete requesterCache[requestAddr];
         delete voteCache[requestAddr][data];
       }
