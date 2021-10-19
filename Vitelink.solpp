@@ -5,8 +5,9 @@ contract Vitelink {
   
     mapping(address => bool) nodeStorage;
     mapping(string => string) dataStorage;
+    mapping(address => uint256) balanceStorage;
     address[] nodes;
-    
+
     mapping(string => mapping(string => uint)) voteCache;
     mapping(string => address) requesterCache;
 
@@ -14,6 +15,7 @@ contract Vitelink {
     message _VitelinkCallback(string requestAddr, string resultData);
 
     tokenId viteToken = tokenId("tti_5649544520544f4b454e6e40");
+    tokenId VitelinkToken = tokenId("tti_b26458ea4e540ab7365010bf");
 
     constructor() public {
       publisher = msg.sender;
@@ -39,7 +41,15 @@ contract Vitelink {
           }
         }
       } else {
-        msg.sender.transfer(msg.tokenid, msg.amount);
+        revert();
+      }
+    }
+
+    onMessage payForContract(address contractAddr) payable {
+      if (msg.tokenid == VitelinkToken) {
+        balanceStorage[contractAddr] += msg.amount;
+      } else {
+        revert();
       }
     }
 
