@@ -53,7 +53,7 @@ const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
     })
   })
 
-  console.log('Vitacle node V0.6 | Ready!')
+  console.log('Vitelink node v0.7 | Ready!')
 })
 
 contractService.on('requested', (data) => {
@@ -70,4 +70,9 @@ contractService.on('requested', (data) => {
     await dataBlock.autoSetPreviousAccountBlock()
     await dataBlock.sign().send()
   })
+})
+
+contractService.on('rewarded', (data) => {
+  if (data.rewardedAddr !== myAccount.address) return
+  console.log('Rewarded 1 VLNK to your account by consensus.')
 })
