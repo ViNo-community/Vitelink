@@ -23,27 +23,35 @@ contract Vitelink {
       nodes.push(msg.sender);
     }
 
+    getter getContractBalance(address contractAddr) returns(uint256) {
+      return balanceStorage[contractAddr];
+    }
+
+    getter getNodes() returns(address[] memory) {
+      return nodes;
+    }
+
     onMessage () payable {
-      if (msg.tokenid == viteToken && msg.amount == 10000 vite) {
-        if (nodeStorage[msg.sender] == true) {
-          revert();
-        } else {
-          nodeStorage[msg.sender] == true;
-          nodes.push(msg.sender);
-        }
-      } else if (msg.tokenid == viteToken && msg.amount == 1 vite) {
-        require(msg.sender != publisher);
-        if (nodeStorage[msg.sender] == true) {
-          for (uint i = 0; i < nodes.length; i++) {
-            if (nodes[i] == msg.sender) {
-              delete nodes[i];
-              msg.sender.transfer(msg.tokenid, 10000 vite);
+        if (msg.tokenid == viteToken && msg.amount == 10000 vite) {
+          if (nodeStorage[msg.sender] == true) {
+            revert();
+          } else {
+            nodeStorage[msg.sender] == true;
+            nodes.push(msg.sender);
+          }
+        } else if (msg.tokenid == viteToken && msg.amount == 1 vite) {
+          require(msg.sender != publisher);
+          if (nodeStorage[msg.sender] == true) {
+            for (uint i = 0; i < nodes.length; i++) {
+              if (nodes[i] == msg.sender) {
+                delete nodes[i];
+                msg.sender.transfer(msg.tokenid, 10000 vite);
+              }
             }
           }
+        } else {
+          revert();
         }
-      } else {
-        revert();
-      }
     }
 
     onMessage payForContract(address contractAddr) payable {
@@ -55,7 +63,7 @@ contract Vitelink {
     }
 
     onMessage request(string calldata requestAddr) payable {
-      require(requesterCache[requestAddr] != address(0x0));
+      require(requesterCache[requestAddr] == address(0x0));
       require(balanceStorage[msg.sender] >= 1);
       balanceStorage[msg.sender] -= 1;
       requesterCache[requestAddr] = msg.sender;

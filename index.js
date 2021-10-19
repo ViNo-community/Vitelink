@@ -7,7 +7,7 @@ const requestVm = require('./src/requestVm')
 const events = require('events')
 
 const contractService = new events.EventEmitter()
-const myAccount = vite.wallet.getWallet(CFG.wallet_mnemonics).deriveAddress(0)
+const myAccount = vite.wallet.getWallet(conf.vite.walletMnemonics).deriveAddress(0)
 
 const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
   clientConfig: '',
@@ -23,20 +23,18 @@ const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
     signatures[vite.abi.encodeLogSignature(f)] = f
   }
 
-  await api.subscribe(
-    'createVmlogSubscription',
-    {
-      addressHeightRange: {
-        [conf.vite.contractToWatch.address]: {
-          fromHeight: '0',
-          toHeight: '0'
-        }
+  await api.subscribe('createVmlogSubscription', {
+    addressHeightRange: {
+      [conf.vite.contractToWatch.address]: {
+        fromHeight: '0',
+        toHeight: '0'
       }
+    }
     }).then(event => {
     event.on(async (results) => {
       for (const result of results) {
         const f = signatures[result.vmlog.topics[0]]
-        if (!f) continue
+        if (!f) return
 
         const decoded = vite.abi.decodeLog(
           f.inputs,
@@ -52,12 +50,12 @@ const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
       }
     })
   })
-
-  console.log('Vitelink node v0.7 | Ready!')
+  console.log('hello')
 })
 
-contractService.on('requested', (data) => {
-  requestVm.request(data.requestAddr).then(webData => {
+contractService.on('requested', async (data) => {
+  console.log('uh')
+  requestVm.request(data.requestAddr).then(async webData => {
     if (webData.startsWith('err')) return
     const dataBlock = accountBlock.createAccountBlock('callContract', {
       address: myAccount.address,
@@ -76,3 +74,5 @@ contractService.on('rewarded', (data) => {
   if (data.rewardedAddr !== myAccount.address) return
   console.log('Rewarded 1 VLNK to your account by consensus.')
 })
+
+console.log('Vitelink node v0.7 | Ready!')
