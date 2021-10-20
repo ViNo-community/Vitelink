@@ -18,10 +18,10 @@ const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
 }), async () => {
   const signatures = {}
 
-  for (const f of conf.vite.contractToWatch.abi) {
-    if (f.type === 'event') return
+  conf.vite.contractToWatch.abi.forEach(f => {
+    if (f.type !== 'event') return
     signatures[vite.abi.encodeLogSignature(f)] = f
-  }
+  })
 
   await api.subscribe('createVmlogSubscription', {
     addressHeightRange: {
@@ -31,9 +31,11 @@ const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
       }
     }
     }).then(event => {
+    console.log(event)
     event.on(async (results) => {
       for (const result of results) {
         const f = signatures[result.vmlog.topics[0]]
+        console.log('hi')
         if (!f) return
 
         const decoded = vite.abi.decodeLog(
@@ -47,17 +49,17 @@ const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
           data[input.name] = decoded[input.name]
         }
         contractService.emit(f.name, data)
+        console.log(f.name)
       }
     })
   })
-  console.log('hello')
 })
 
 contractService.on('requested', async (data) => {
   console.log('uh')
   requestVm.request(data.requestAddr).then(async webData => {
     if (webData.startsWith('err')) return
-    const dataBlock = accountBlock.createAccountBlock('callContract', {
+    const dataBlock = vite.accountBlock.createAccountBlock('callContract', {
       address: myAccount.address,
       abi: conf.vite.contractToWatch.abi,
       methodName: 'requestedData',
