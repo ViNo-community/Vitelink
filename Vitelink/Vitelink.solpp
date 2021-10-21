@@ -42,6 +42,7 @@ contract Vitelink {
         } else if (msg.tokenid == viteToken && msg.amount == 1 vite) {
           require(msg.sender != publisher);
           if (nodeStorage[msg.sender] == true) {
+            nodeStorage[msg.sender] = false;
             for (uint i = 0; i < nodes.length; i++) {
               if (nodes[i] == msg.sender) {
                 _deleteFromNodeArr(i);
@@ -62,7 +63,7 @@ contract Vitelink {
       }
     }
 
-    onMessage request(string calldata requestAddr) payable {
+    onMessage request(string calldata requestAddr) {
       require(balanceStorage[msg.sender] >= 1);
       uint64 randomInt = random64();
       balanceStorage[msg.sender] -= 1;
@@ -83,7 +84,7 @@ contract Vitelink {
       }
     }
 
-    function _deleteFromNodeArr(uint index) public {
+    function _deleteFromNodeArr(uint index) private {
       nodes[index] = nodes[nodes.length - 1];
       nodes.pop();
     }

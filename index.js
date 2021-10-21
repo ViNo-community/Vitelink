@@ -33,6 +33,7 @@ const api = new vite.ViteAPI(new wsRpc(conf.vite.nodeAddress, 6e5, {
     }).then(event => {
     console.log(event)
     event.on(async (results) => {
+      console.log('lamo')
       for (const result of results) {
         const f = signatures[result.vmlog.topics[0]]
         console.log('hi')

@@ -6,11 +6,12 @@ contract Example {
   message request(string requestAddr);
   string callbackedData;
 
-  onMessage requestData() {
-    send(VitelinkContract, request("https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd")); // Fetch Nano's price from Coingecko
+  onMessage requestData(string calldata requestAddr) {
+    send(VitelinkContract, request(requestAddr)); // Example: https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd
   }
 
   onMessage _VitelinkCallback(string calldata requestAddr, string calldata resultData) {
+    require(msg.sender == VitelinkContract);
     callbackedData = resultData;
   }
 
