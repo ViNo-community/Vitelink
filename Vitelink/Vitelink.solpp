@@ -13,6 +13,7 @@ contract Vitelink {
 
     event requested(string requestAddr, uint64 requestId);
     event rewarded(address rewardedAddr);
+
     message _vitelinkCallback(string requestAddr, string resultData);
 
     tokenId viteToken = tokenId("tti_5649544520544f4b454e6e40");
@@ -32,28 +33,33 @@ contract Vitelink {
       return nodes;
     }
 
-    onMessage () payable {
-        if (msg.tokenid == viteToken && msg.amount == 10000 vite) {
-          if (nodeStorage[msg.sender] == true) {
-            revert();
-          } else {
-            nodeStorage[msg.sender] = true;
-            nodes.push(msg.sender);
-          }
-        } else if (msg.tokenid == viteToken && msg.amount == 1 vite) {
-          require(msg.sender != publisher);
-          if (nodeStorage[msg.sender] == true) {
-            nodeStorage[msg.sender] = false;
-            for (uint i = 0; i < nodes.length; i++) {
-              if (nodes[i] == msg.sender) {
-                _deleteFromNodeArr(i);
-                msg.sender.transfer(msg.tokenid, 10000 vite);
-              }
+    getter isNode(address walletAddr) returns(bool) {
+      return nodeStorage[walletAddr];
+    }
+
+    onMessage stakeForNode() payable {
+      if (msg.tokenid == viteToken && msg.amount == 10000 vite) {
+        require(msg.sender != publisher);
+        if (nodeStorage[msg.sender] == true) {
+          revert();
+        } else {
+          nodes.push(msg.sender);
+          nodeStorage[msg.sender] = true;
+        }
+      } else if (msg.tokenid == viteToken && msg.amount == 0 vite) {
+        require(msg.sender != publisher);
+        if (nodeStorage[msg.sender] == true) {
+          nodeStorage[msg.sender] = false;
+          for (uint i = 0; i < nodes.length; i++) {
+            if (nodes[i] == msg.sender) {
+              _deleteFromNodeArr(i);
+              msg.sender.transfer(msg.tokenid, 10000 vite);
             }
           }
-        } else {
-          revert();
         }
+      } else {
+        revert();
+      }
     }
 
     onMessage fundContract(address contractAddr) payable {

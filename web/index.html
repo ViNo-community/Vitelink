@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitelink</title>
+    <script src="assets/jquery.min.js"></script>
+    <script src="assets/qr.min.js"></script>
+    <script src="assets/vite/vite.js"></script>
+    <script src="assets/vite/vite-http.js"></script>
+    <script src="assets/polyfill/buffer.js"></script>
+    <script src="assets/index.js"></script>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="center">
+        <div class="margin-100"></div>
+        <h1>Vitelink is oracle for Vite developed by <span class=vino>VINO</span></h1>
+        <div class="margin-50"></div>
+        <div class="margin-50"></div>
+        <h1>
+            Total nodes: <span id="nodeCount">Loading...</span>
+        </h1>
+        <div class="margin-50"></div>
+        <div class="separate">
+            <div class="center">
+                <h2>To fund a <span class=vino>contract</span></h2>
+                <div>Please write a contract address and send VLK:</div>
+                <div class="margin-20"></div>
+                <center><div class="qr" id="fundQr"></div></center>
+                <div class="margin-20"></div>
+                <input type="text" id="fundAddress" placeholder="vite_......">
+            </div>
+            <div class="center">
+                <h2>To stake/unstake for <span class="vino">node</span></h2>
+                <div>Please send 10,000 or 0 VITE</div>
+                <div class="margin-20"></div>
+                <center><div class="qr" id="stakeQr"></div></center>
+                <div class="margin-20"></div>
+            </div>
+        </div>
+        <div>
+            <h2>Contract Address</h2>
+            <p id="contractAddress" class="monospace">Loading...</p>
+        </div>
+        <div class="margin-100"></div>
+        <h5>If there's a problem with executions, funds should be sent back automatically. Vitelink is based on trustless smart contract.</h5>
+        <h5>Coding by KaffinPX#1123 | Styling by Not Thomiz#0001</h5>
+        <div class="margin-20"></div>
+    </div>
+</body>
+</html>
