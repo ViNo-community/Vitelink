@@ -13,14 +13,15 @@ contract Vitelink {
 
     event requested(string requestAddr, uint64 requestId);
     event rewarded(address rewardedAddr);
-    message _VitelinkCallback(string requestAddr, string resultData);
+    message _vitelinkCallback(string requestAddr, string resultData);
 
     tokenId viteToken = tokenId("tti_5649544520544f4b454e6e40");
-    tokenId VitelinkToken = tokenId("tti_b26458ea4e540ab7365010bf");
+    tokenId vitelinkToken = tokenId("tti_e4979a7d8462ce81945904e5");
 
     constructor() public {
       publisher = msg.sender;
       nodes.push(msg.sender);
+      nodeStorage[msg.sender] = true;
     }
 
     getter getContractBalance(address contractAddr) returns(uint256) {
@@ -36,7 +37,7 @@ contract Vitelink {
           if (nodeStorage[msg.sender] == true) {
             revert();
           } else {
-            nodeStorage[msg.sender] == true;
+            nodeStorage[msg.sender] = true;
             nodes.push(msg.sender);
           }
         } else if (msg.tokenid == viteToken && msg.amount == 1 vite) {
@@ -55,8 +56,8 @@ contract Vitelink {
         }
     }
 
-    onMessage payForContract(address contractAddr) payable {
-      if (msg.tokenid == VitelinkToken) {
+    onMessage fundContract(address contractAddr) payable {
+      if (msg.tokenid == vitelinkToken) {
         balanceStorage[contractAddr] += msg.amount;
       } else {
         revert();
@@ -74,10 +75,10 @@ contract Vitelink {
     onMessage requestedData(string calldata requestAddr, uint64 requestId, string calldata data) {
       require(nodeStorage[msg.sender] == true);
       voteCache[requestAddr][requestId][data] += 1;
-      if (nodes.length / 2 <= voteCache[requestAddr][requestId][data]) {
-        send(requesterCache[requestAddr][requestId], _VitelinkCallback(requestAddr, data));
+      if ((nodes.length / 2) + 1 <= voteCache[requestAddr][requestId][data]) {
+        send(requesterCache[requestAddr][requestId], _vitelinkCallback(requestAddr, data));
         address rewardedNode = nodes[random64() % nodes.length];
-        rewardedNode.transfer(VitelinkToken, 1);
+        rewardedNode.transfer(vitelinkToken, 1);
         emit rewarded(rewardedNode);
         delete requesterCache[requestAddr][requestId];
         delete voteCache[requestAddr][requestId][data];

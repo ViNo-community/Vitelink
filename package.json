@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@vite/vitejs": "^2.3.15",
-    "@vite/vitejs-ws": "^2.3.15"
+    "@vite/vitejs": "^2.3.16",
+    "@vite/vitejs-ws": "^2.3.16"
   }
 }
