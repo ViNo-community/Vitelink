@@ -12,13 +12,15 @@ const httpProvider = new $vite_HTTP.HTTP_RPC("https://node-vite.thomiz.dev/http"
 window.onload = function () {
   const fundqr = new QRCode("fundQr", {
     width: 240,
-    height: 240
+    height: 240,
+    correctLevel : QRCode.CorrectLevel.L
   })
 
   const stakeqr = new QRCode("stakeQr", {
     text: `vite:${contractAddress}/stakeForNode`,
     width: 240,
-    height: 240
+    height: 240,
+    correctLevel : QRCode.CorrectLevel.L
   })
 
   document.getElementById('fundAddress').oninput = function () {
