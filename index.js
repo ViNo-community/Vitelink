@@ -76,8 +76,7 @@ contractService.on('requested', async (data) => {
 })
 
 contractService.on('rewarded', (data) => {
-  if (data.rewardedAddr !== myAccount.address) return
-  styledLog('Rewarded 1 VLNK to your account by consensus.')
+  styledLog('Rewarded 1 VLNK to node by consensus.')
 })
 
 styledLog('Vitelink node v0.8 | Ready!')

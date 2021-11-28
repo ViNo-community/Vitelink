@@ -7,7 +7,7 @@ const offchaincode = Buffer.from(
 
 const contractAddress = "vite_dcf2b004a958b76f4427c7cbdfe2eba758e66da696308ae9cb"
 
-const httpProvider = new $vite_HTTP.HTTP_RPC("https://node-vite.thomiz.dev/http")
+const httpProvider = new $vite_HTTP.HTTP_RPC("https://buidl.vite.net/gvite/http")
 
 window.onload = function () {
   const fundqr = new QRCode("fundQr", {
@@ -20,7 +20,7 @@ window.onload = function () {
     text: `vite:${contractAddress}/stakeForNode`,
     width: 240,
     height: 240,
-    correctLevel : QRCode.CorrectLevel.L
+    correctLevel: QRCode.CorrectLevel.L
   })
 
   document.getElementById('fundAddress').oninput = function () {
@@ -42,7 +42,7 @@ window.onload = function () {
             abi.find(e => e.name === "getNodes").outputs.map(e => e.type),
             Buffer.from(result, "base64").toString("hex")
         )
-        document.getElementById("nodeCount").textContent = `${JSON.parse(decoded[0]).length}`
+        document.getElementById("nodeCount").textContent = `${String(decoded[0]).split(',').length}`
         return parseInt(decoded[0])
     })()
 
