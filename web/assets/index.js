@@ -24,7 +24,8 @@ window.onload = function () {
   })
 
   document.getElementById('fundAddress').oninput = function () {
-    fundqr.makeCode(`vite:${document.getElementById('fundAddress').value}/fundContract`)
+    const call = $vite_vitejs.abi.encodeFunctionCall(abi, [ document.getElementById('fundAddress').value ], "fundContract")
+    fundqr.makeCode(`vite:${contractAddress}/fundContract?data=${Buffer.from(call, "hex").toString("base64")}`)
   }
 
   const onConnect = async () => {
