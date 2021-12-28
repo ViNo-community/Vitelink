@@ -38,16 +38,16 @@ contract Vitelink {
     }
 
     onMessage stakeForNode() payable {
-      if (msg.tokenid == viteToken && msg.amount == 10000 vite) {
-        require(msg.sender != publisher);
+      require(msg.tokenid == viteToken && msg.sender != publisher);
+
+      if (msg.amount == 10000 vite) {
         if (nodeStorage[msg.sender] == true) {
           revert();
         } else {
           nodes.push(msg.sender);
           nodeStorage[msg.sender] = true;
         }
-      } else if (msg.tokenid == viteToken && msg.amount == 0 vite) {
-        require(msg.sender != publisher);
+      } else if (msg.amount == 0 vite) {
         if (nodeStorage[msg.sender] == true) {
           nodeStorage[msg.sender] = false;
           for (uint i = 0; i < nodes.length; i++) {
@@ -63,11 +63,8 @@ contract Vitelink {
     }
 
     onMessage fundContract(address contractAddr) payable {
-      if (msg.tokenid == vitelinkToken) {
-        balanceStorage[contractAddr] += msg.amount;
-      } else {
-        revert();
-      }
+      require(msg.tokenid == vitelinkToken && msg.amount != 0);
+      balanceStorage[contractAddr] += msg.amount;
     }
 
     onMessage request(string calldata requestAddr) {
