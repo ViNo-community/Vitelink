@@ -1,7 +1,7 @@
 pragma soliditypp ^0.4.3;
 
 contract Example {
-  address vitelinkContract = address("vite_dcf2b004a958b76f4427c7cbdfe2eba758e66da696308ae9cb");
+  address vitelinkContract = address("vite_0dcc1a88e041a537baefb77639a472aaa130b5b3689c055933");
 
   message request(string requestAddr);
   string callbackedData;

@@ -11,21 +11,22 @@ const httpProvider = new $vite_HTTP.HTTP_RPC("https://buidl.vite.net/gvite/http"
 
 window.onload = function () {
   const fundqr = new QRCode("fundQr", {
-    width: 240,
-    height: 240,
+    width: 180,
+    height: 180,
     correctLevel : QRCode.CorrectLevel.L
   })
 
-  const stakeqr = new QRCode("stakeQr", {
+  new QRCode("stakeQr", {
     text: `vite:${contractAddress}/stakeForNode`,
-    width: 240,
-    height: 240,
+    width: 180,
+    height: 180,
     correctLevel: QRCode.CorrectLevel.L
   })
 
   document.getElementById('fundAddress').oninput = function () {
+    if (document.getElementById('fundAddress').value.length != 55) return
     const call = $vite_vitejs.abi.encodeFunctionCall(abi, [ document.getElementById('fundAddress').value ], "fundContract")
-    fundqr.makeCode(`vite:${contractAddress}/fundContract?data=${Buffer.from(call, "hex").toString("base64")}`)
+    fundqr.makeCode(`vite:${contractAddress}/fundContract?data=${Buffer.from(call, "hex").toString("base64").replace(/\++/g, '-').replace(/\/+/g, '_').replace(/=+/g, '')}`)
   }
 
   const onConnect = async () => {
